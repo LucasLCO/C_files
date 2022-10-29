@@ -114,7 +114,7 @@ void rev(cliente *cl, carro *ca,int cont){
 			ca+=cl->numcar;	
 			printf("\nNome: %s\nCPF: %s",cl->nome,cl->CPF);
 			printf("\nMarca: %s\nModelo: %c\nreg: %i",ca->marca,ca->modelo,cl->numcar);
-			printf("\nPreço: %i", cl->numcar+cl->numcar*1000);
+			printf("\nPreco: %.2fR$", ca->valor);
 			printf("\n----------Finalizado-----------");
 			cl->numcar=-1;
 			ca->qcarro-=1;
@@ -126,7 +126,7 @@ void rev(cliente *cl, carro *ca,int cont){
 void mostra(carro *ca){
 	int i;
 
-	printf("\nCarros Disponíveis:");
+	printf("\nCarros Disponiveis:");
 	for(i=0;i<3;i++,ca++){
 		printf("\nMarca: %s\nModelo: %c\nqcarro: %i\nreg: %i\n----------------------------\n",ca->marca,ca->modelo,ca->qcarro,ca->regcar);
 	}

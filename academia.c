@@ -16,120 +16,118 @@ typedef struct luta{
        float valor;                          
 }luta;
  
-void aloca_l(luta **pl, int cont);
-void cadastra_l(luta *pl);
-void aloca_a(aluno **pa, int cont);
-void cadastra_a(aluno *pa, luta *pl);
-void enc(aluno *pa, luta *pl, int cont);
-int busca_vago(aluno *cl,int cont);
- 
-void main(){
-	int op, cont=0, vago;
-	luta *pl=NULL;
-	aluno *pa=NULL;
-	aloca_l(&pl, 3);
-	cadastra_l(pl);
+void aloca_al(aluno **al, int cont);
+void aloca_lu(luta **lu, int cont);
+void cadastra_lu(luta *lu);
+void cadastra_al(luta *lu, aluno *al, int cont);
+void mostra_lu(luta *lu);
+void encerra(luta *lu, aluno *al, int cont);
+int busca_vago(aluno *al, int cont);
+
+
+int main(void){
+	aluno *al = NULL;
+	luta *lu = NULL;
+	int op, vago, cont=0;
+	aloca_lu(&lu,3);
+	cadastra_lu(lu);
 	do{
-		system("cls");
-		printf("[1]Matricula\n[2]Encerra Matricula\n[3]Fim\nOpcao: ");
-		scanf("%i", &op);
+		printf("\n[1]Matricula\n[2]Encerra Matricula\n[3]FIM\n: ");
+		scanf("%i",&op);
 		fflush(stdin);
-		switch(op)
-		{
+		switch(op){
 			case 1:
-				vago = busca_vago(pa,cont);
-				if(vago == -1){	
-					aloca_a(&pa,cont+1);
-					cont++;
-				}
-				cadastra_a(pa,pl);
+			vago = busca_vago(al, cont);
+			if(vago == -1){
+				aloca_al(&al, cont+1);
 				cont++;
+			}
+			cadastra_al(lu,al,cont);
+
 				break;
 			case 2:
-				enc(pa, pl, cont);
-				printf("\nMatricula Encerrada com Sucesso\n\n");
-				system("pause");
+			encerra(lu, al, cont);
 				break;
 		}
 	}while(op!=3);
+
 }
 
-void aloca_l(luta **pl, int cont){
-	if((*pl=(luta*)realloc(*pl, cont*sizeof(luta)))==NULL)
+
+void aloca_al(aluno **al, int cont){
+	if((*al=(aluno *)realloc(*al,cont*sizeof(aluno)))==NULL)
 		exit(1);
 }
 
-void cadastra_l(luta *pl){
-	int i;
-	pl->qaluno=0;
-	strcpy(pl->modalidade, "Jiu-Jitsu");
-	pl->valor=50;
-	pl->grau=1;
-	pl->regaula=1;
-	pl++;
-	pl->qaluno=0;
-	strcpy(pl->modalidade, "MMA");
-	pl->valor=75.50;
-	pl->grau=2;
-	pl->regaula=2;
-	pl++;			
-	pl->qaluno=0;
-	strcpy(pl->modalidade, "Boxe");
-	pl->valor=100;
-	pl->grau=3;
-	pl->regaula=3;
+void aloca_lu(luta **lu, int cont){
+	if((*lu=(luta *)realloc(*lu,cont*sizeof(luta)))==NULL)
+		exit(1);
 }
 
-void aloca_a(aluno **pa, int cont){
-	if((*pa=(aluno*)realloc(*pa, cont*sizeof(aluno)))==NULL)
-		exit(1);
-} 
+void cadastra_lu(luta *lu){
+	strcpy(lu->modalidade,"JIU-JITSU");
+	lu->grau=1;
+	lu->regaula=0;
+	lu->valor=100;
+	lu->qaluno=0;
+	lu++;
+	strcpy(lu->modalidade,"BOXE");
+	lu->grau=2;
+	lu->regaula=1;
+	lu->valor=200;
+	lu->qaluno=0;
+	lu++;strcpy(lu->modalidade,"JUDO");
+	lu->grau=3;
+	lu->regaula=2;
+	lu->valor=300;
+	lu->qaluno=0;
+}
 
-void cadastra_a(aluno *pa, luta *pl){
+void cadastra_al(luta *lu, aluno *al, int cont){
+	al+=cont-1;
+	printf("\nNome: ");
+	gets(al->nome);
+	fflush(stdin);
+	printf("\nCPF: ");
+	gets(al->CPF);
+	fflush(stdin);
+	mostra_lu(lu);
+	printf("\nRegistro aula: ");
+	scanf("%i", &(al->numaula));
+	fflush(stdin);
+	lu+=al->numaula;
+	lu->qaluno++;
+}
+
+void mostra_lu(luta *lu){
 	int i;
-	for(i=0; i<3; i++, pl++)
-	{
-		printf("\nModalidade: %s\n Numreg: %d\n Alunos: %d\n Valor: %.2f\n", pl->modalidade, pl->regaula, pl->qaluno, pl->valor);
-	}
-	for(i=0; i<3; i++, pl--)
-		printf("");
-	printf("\nDigite o cpf do aluno: ");
-	gets(pa->CPF);
-	fflush(stdin);
-	printf("\nDigite seu nome: ");
-	gets(pa->nome);
-	fflush(stdin);
-	printf("\nDigite o numero do registro de aula: ");
-	scanf("%d", &(pa->numaula));
-	fflush(stdin);
-	pa+=pa->numaula-1;
-	pl->qaluno++;
-} 
-void enc(aluno *pa, luta *pl, int cont){
+	for(i=0; i<3;i++,lu++)
+		printf("\n-----------\nModalidade: %s\nGrau: %i\n Quantidade Aluno: %i\n-----------\n",lu->modalidade,lu->grau,lu->qaluno);
+}
+
+void encerra(luta *lu, aluno *al, int cont){
 	int i;
 	char cpf[13];
-	printf("\nDigite seu cpf: ");
+	printf("CPF: ");
 	gets(cpf);
 	fflush(stdin);
-	for(i=0; i<cont; i++, pa++){
-		if((strcmp(pa->CPF, cpf))==0){
-			pl+=pa->numaula-1;
-			printf("\nCPF: %s\nNome: %s\nNumero de Aula: %d", pa->CPF, pa->nome, pa->numaula);
-			printf("\nModalidade: %s\n", pl->modalidade);
-			printf("Valor: %.2f", pl->valor);
-			pl->qaluno--;
-			pa->numaula=-1;
-		}
-	} 
-}
-
-int busca_vago(aluno*pa,int cont){
-	int i;
 	for(i=0; i<cont; i++){
-		if(pa->numaula == -1)
+		if((strcmp(al->CPF,cpf))==0){
+			lu+=al->numaula;
+			printf("\nNome: %s\nCPF: %s\nNumero Aula: %i",al->nome,al->CPF,al->numaula);
+			printf("\nModalidade: %s\nGrau:%i \nValor: R$%.2f",lu->modalidade,lu->grau,lu->valor);
+			al->numaula=-1;
+			lu->qaluno--;
+		}
+	}
+}	
+
+int busca_vago(aluno *al, int cont){
+	int i;
+	for(i=0; i<cont; i++,al++){
+		if(al->numaula==-1)
 			return i;
 	}
-
 	return -1;
 
-}///ta bugado
+}
