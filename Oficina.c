@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
+#include <ctype.h>
 
 typedef struct cliente{
 	char CPF[13];
@@ -19,6 +21,7 @@ typedef struct carro{
 
 void realoca_cl(cliente **cl, int cont);
 void realoca_ca(carro **ca, int cont);
+int carro_confere(carro *ca);
 void cadastra_cl(cliente *cl, carro *ca, int cont);
 void cadastra_carro(carro *ca);
 void rev(cliente *cl, carro *ca,int cont);
@@ -26,7 +29,7 @@ void mostra(carro *ca);
 int busca_vago(cliente *cl,int cont);
 
 
-int main(){
+int main(void){
 	cliente *cl = NULL;
 	carro *ca = NULL;
 	int op, cont = 0, vazio = 0;
@@ -67,6 +70,24 @@ void realoca_ca(carro **ca, int cont){
 }
 
 
+int carro_confere(carro *ca){
+	char marca[50], modelo;
+	int i;
+	printf("\nMarca: ");
+	gets(marca);
+	fflush(stdin);
+	printf("\nModelo: ");
+	scanf("%c",&modelo);
+	fflush(stdin);
+	modelo = toupper(modelo);
+	for(i=0;i<3;i++,ca++){
+		if((strcasecmp(ca->marca,marca))==0 && ca->modelo==modelo)
+			return (ca->regcar);
+	}
+	return -1;
+}
+
+
 void cadastra_cl(cliente *cl, carro *ca, int cont){
 	cl += cont-1;
 	printf("\nCPF: ");
@@ -76,8 +97,8 @@ void cadastra_cl(cliente *cl, carro *ca, int cont){
 	gets(cl->nome);
 	fflush(stdin);
 	mostra(ca);
-	printf("\nRegistro Carro: ");
-	scanf("%i",&(cl->numcar));
+	if((cl->numcar=carro_confere(ca))==-1)
+		printf("Carro escolhido nao existe");
 	ca+=cl->numcar;
 	ca->qcarro++;
 }
@@ -114,7 +135,7 @@ void rev(cliente *cl, carro *ca,int cont){
 			ca+=cl->numcar;	
 			printf("\nNome: %s\nCPF: %s",cl->nome,cl->CPF);
 			printf("\nMarca: %s\nModelo: %c\nreg: %i",ca->marca,ca->modelo,cl->numcar);
-			printf("\nPreco: %.2fR$", ca->valor);
+			printf("\nPreco: R$%.2f", ca->valor);
 			printf("\n----------Finalizado-----------");
 			cl->numcar=-1;
 			ca->qcarro-=1;
@@ -127,15 +148,16 @@ void mostra(carro *ca){
 	int i;
 
 	printf("\nCarros Disponiveis:");
+	printf("\nRegistro\tMarca\t\tModelo\t\tQuantidade\tValor\n");
 	for(i=0;i<3;i++,ca++){
-		printf("\nMarca: %s\nModelo: %c\nqcarro: %i\nreg: %i\n----------------------------\n",ca->marca,ca->modelo,ca->qcarro,ca->regcar);
+		printf("%i\t\t%s\t\t%c\t\t%i\t\tR$%.2f\n",ca->regcar,ca->marca,ca->modelo,ca->qcarro,ca->valor);
 	}
 }
 
 
 int busca_vago(cliente *cl,int cont){
 	int i;
-	for(i=0; i<cont; i++){
+	for(i=0; i<cont; i++, cl++){
 		if(cl->numcar == -1)
 			return i;
 	}
