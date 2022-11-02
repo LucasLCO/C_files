@@ -149,9 +149,8 @@ void mostra(carro *ca){
 
 	printf("\nCarros Disponiveis:");
 	printf("\nRegistro\tMarca\t\tModelo\t\tQuantidade\tValor\n");
-	for(i=0;i<3;i++,ca++){
+	for(i=0;i<3;i++,ca++)
 		printf("%i\t\t%s\t\t%c\t\t%i\t\tR$%.2f\n",ca->regcar,ca->marca,ca->modelo,ca->qcarro,ca->valor);
-	}
 }
 
 

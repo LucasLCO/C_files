@@ -20,6 +20,7 @@ void aloca_al(aluno **al, int cont);
 void aloca_lu(luta **lu, int cont);
 void cadastra_lu(luta *lu);
 void cadastra_al(luta *lu, aluno *al, int cont);
+int confere_luta(luta *lu);
 void mostra_lu(luta *lu);
 void encerra(luta *lu, aluno *al, int cont);
 int busca_vago(aluno *al, int cont);
@@ -64,6 +65,22 @@ void aloca_lu(luta **lu, int cont){
 		exit(1);
 }
 
+int confere_luta(luta *lu){
+	char modalidade[50];
+	int i, grau;
+	printf("\nModalidade: ");
+	gets(modalidade);
+	fflush(stdin);
+	printf("\nGrau: ");
+	scanf("%i",&grau);
+	fflush(stdin);
+	for(i=0;i<3;i++,lu++){
+		if((strcasecmp(lu->modalidade,modalidade))==0 && lu->grau==grau)
+			return (lu->regaula);
+	}
+	return -1;
+}
+
 void cadastra_lu(luta *lu){
 	strcpy(lu->modalidade,"JIU-JITSU");
 	lu->grau=1;
@@ -92,8 +109,8 @@ void cadastra_al(luta *lu, aluno *al, int cont){
 	gets(al->CPF);
 	fflush(stdin);
 	mostra_lu(lu);
-	printf("\nRegistro aula: ");
-	scanf("%i", &(al->numaula));
+	if((al->numaula=confere_luta(lu))==-1)
+		printf("Carro escolhido nao existe");
 	fflush(stdin);
 	lu+=al->numaula;
 	lu->qaluno++;
@@ -101,8 +118,11 @@ void cadastra_al(luta *lu, aluno *al, int cont){
 
 void mostra_lu(luta *lu){
 	int i;
-	for(i=0; i<3;i++,lu++)
-		printf("\n-----------\nModalidade: %s\nGrau: %i\n Quantidade Aluno: %i\n-----------\n",lu->modalidade,lu->grau,lu->qaluno);
+	printf("\nAulas Disponiveis:");
+	printf("\nAula\tModalidade\tGrau\tQuantidade\tValor\n");
+	for(i=0;i<3;i++,lu++)
+		printf("%i\t%s\t%c\t%i\tR$%.2f\n",lu->regaula,lu->modalidade,lu->grau,lu->qaluno,lu->valor);
+
 }
 
 void encerra(luta *lu, aluno *al, int cont){
